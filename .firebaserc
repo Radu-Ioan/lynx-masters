@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "esri-project-fcadf": {
+      "hosting": {
+        "angular-cli-esri-map": [
+          "esri-project-fcadf"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "esri-project-fcadf"
+  }
+}
