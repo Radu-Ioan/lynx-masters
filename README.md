@@ -1,4 +1,3 @@
-aici se pastreaza schimbarile facute ca sa prezentam incremental dezvoltarea proiectului
 
 Cum se foloseste:
 
