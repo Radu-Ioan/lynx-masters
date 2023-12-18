@@ -1,15 +1,35 @@
+<!-- Here's the DIV that we inject the map into -->
 <div fxLayout="row">
   <div fxFlex="20%" fxLayout="column">
-    <mat-list>
-      <mat-list-item>
-        <button class="btn internal" (click)="navigateHome()">Home</button>
-      </mat-list-item>
-      <mat-list-item>
-        <button class="btn internal" (click)="signout()">Logout</button>
-      </mat-list-item>
-    </mat-list>
+      <mat-list>
+          <mat-list-item>
+            <button class="btn internal" (click)="navigateHome()">Home</button>
+          </mat-list-item>
+          <mat-list-item>
+            <button class="btn internal" (click)="signout()">Logout</button>
+          </mat-list-item>
+      </mat-list>
+
+      <mat-form-field>
+        <mat-label>Show a trail</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let fl of pointsLayers" [value]="fl.name" (click)="showTrail(fl.name)">
+            {{fl.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Start a trip</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let fl of pointsLayers" [value]="fl.name" (click)="startTrip(fl.name)">
+            {{fl.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
   </div>
-  <div fxFlex="80%">
-    <div #mapViewNode class="screen-height"></div>
+  <div fxFlex="80%" class="measure-container">
+      <div #mapViewNode class="screen-height"></div>
+      <div id="measurements"></div>
   </div>
 </div>

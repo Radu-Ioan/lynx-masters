@@ -64,13 +64,181 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
   loaded = false;
 
+
+  // Traseele gata desenate pe harta
+  // In aceste liste, se vor tine perechi {nume_traseu: FeatureLayerTraseu}
+  // Fiind typescript, cand se vor adauga elemente, va arata asa
+  // points.add({name: <string-nume-traseu>,
+  //    layer: <referinta-obiect-layer>
+  // })
+  pointsLayers: any[] = [];
+  roadsLayers: any[] = [];
+
+  // aici in loc de un layer, un nume de traseu va fi imperecheat cu 2 numere care vor
+  // reprezenta coordonatele punctului de start (necesara la partea de rutare)
+  startPoints = {};
+
   // locate object
   locate: esri.Locate;
 
+  measurements: HTMLElement;
 
   constructor(
     private router: Router, private authService: AuthService
   ) { }
+
+
+  private addTrestia() {
+    const pointsRenderer = {
+      type: "simple",  // autocasts as new SimpleRenderer()
+      symbol: {
+        type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+        size: 8,
+        color: "#8bef1c",
+        outline: {  // autocasts as new SimpleLineSymbol()
+          width: 0.5,
+          color: "white"
+        }
+      }
+    };
+    const roadRenderer = {
+      "type": "simple",
+      "symbol": {
+        "color": "#e3bb19",
+        "type": "simple-line",
+        "width": "6px",
+        "height": "18px"
+      }
+    }
+
+    let trailName = "Trestia - Ruda";
+    let points = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseu_Trestia_Ruda/FeatureServer/0",
+      renderer: pointsRenderer
+    });
+    let road = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseu_Trestia_Ruda/FeatureServer/1",
+      renderer: roadRenderer
+    });
+    this.pointsLayers.push({name: trailName, layer: points});
+    this.roadsLayers.push({name: trailName, layer: road});
+    this.startPoints[trailName] = {lat: 45.010655, lon: 25.645282};
+  }
+
+  private addStanciu() {
+    const pointsRenderer = {
+      type: "simple",  // autocasts as new SimpleRenderer()
+      symbol: {
+        type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+        size: 8,
+        color: "#A349E0",
+        outline: {  // autocasts as new SimpleLineSymbol()
+          width: 0.5,
+          color: "white"
+        }
+      }
+    }
+    const roadRenderer = {
+      "type": "simple",
+      "symbol": {
+        "color": "#38d9d4",
+        "type": "simple-line",
+        "width": "6px",
+        "height": "18px"
+      }
+    }
+    const trailName = "Colibasi - Vf Stanciu - Tisa";
+    const points = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Colibasi_Stanciu_Tisa/FeatureServer/0",
+      renderer: pointsRenderer
+    });
+    const road = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Colibasi_Stanciu_Tisa/FeatureServer/1",
+      renderer: roadRenderer
+    });
+    this.pointsLayers.push({name: trailName, layer: points});
+    this.roadsLayers.push({name: trailName, layer: road});
+    this.startPoints[trailName] = {lat: 45.029639, lon: 25.611582};
+  }
+
+  private addBana() {
+    const pointsRenderer = {
+      type: "simple",  // autocasts as new SimpleRenderer()
+      symbol: {
+        type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+        size: 8,
+        color: "#e17a31",
+        outline: {  // autocasts as new SimpleLineSymbol()
+          width: 0.5,
+          color: "white"
+        }
+      }
+    }
+    const roadRenderer = {
+      "type": "simple",
+      "symbol": {
+        "color": "#284de1",
+        "type": "simple-line",
+        "width": "6px",
+        "height": "18px"
+      }
+    }
+    const trailName = "Bana - Ditesti";
+    const points = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseul_Bana_Ditesti/FeatureServer/0",
+      renderer: pointsRenderer
+    });
+    const road = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseul_Bana_Ditesti/FeatureServer/1",
+      renderer: roadRenderer
+    });
+    this.pointsLayers.push({name: trailName, layer: points});
+    this.roadsLayers.push({name: trailName, layer: road});
+    this.startPoints[trailName] = {lat: 44.973650, lon: 25.660220};
+  }
+
+  private addCristian() {
+    const pointsRenderer = {
+      type: "simple",  // autocasts as new SimpleRenderer()
+      symbol: {
+        type: "simple-marker",  // autocasts as new SimpleMarkerSymbol()
+        size: 8,
+        color: "#DB2A25",
+        outline: {  // autocasts as new SimpleLineSymbol()
+          width: 0.5,
+          color: "white"
+        }
+      }
+    }
+    const roadRenderer = {
+      "type": "simple",
+      "symbol": {
+        "color": "#9751A8",
+        "type": "simple-line",
+        "width": "6px",
+        "height": "18px"
+      }
+    }
+    const trailName = "Cristian";
+    const points = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseu_Cristian/FeatureServer/0",
+      renderer: pointsRenderer
+    });
+    const road = new this._FeatureLayer({
+      url: "https://services8.arcgis.com/wnkN7vRJ1jovu0Z6/arcgis/rest/services/Traseu_Cristian/FeatureServer/1",
+      renderer: roadRenderer
+    });
+    this.pointsLayers.push({name: trailName, layer: points});
+    this.roadsLayers.push({name: trailName, layer: road});
+    this.startPoints[trailName] = {lat: 44.991246, lon: 25.633313};
+  }
+
+  initAppLayers() {
+    this.addTrestia();
+    this.addStanciu();
+    this.addBana();
+    this.addCristian()
+  }
 
   async initializeMap() {
     try {
@@ -123,6 +291,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       this.map = new Map(mapProperties);
 
+      this.initAppLayers();
       this.addGraphicLayers();
 
       // Initialize the MapView
@@ -146,6 +315,8 @@ export class EsriMapComponent implements OnInit, OnDestroy {
         useHeadingEnabled: false
       });
       this.view.ui.add(this.locate, "top-left");
+
+      this.addMeasureElements();
 
 
       // Fires `pointer-move` event when user clicks on "Shift"
@@ -196,6 +367,212 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     }
   }
 
+  showTrail(name: string) {
+    this.map.layers.removeAll();
+    this.graphicsLayer.graphics.removeAll();
+    this.view.graphics.removeAll();
+
+    this.showRoad(name);
+  }
+
+  showRoad(id: string) {
+    for (let i = 0; i < this.pointsLayers.length; i++) {
+      if (id === this.pointsLayers[i].name) {
+        this.map.add(this.roadsLayers[i].layer);
+        this.map.add(this.pointsLayers[i].layer);
+        this.map.add(this.sketchGraphicsLayer);
+        break;
+      }
+    }
+  }
+
+  async startTrip(tripName: string) {
+    this.map.layers.removeAll();
+    this.graphicsLayer.graphics.removeAll();
+    this.view.graphics.removeAll();
+
+    let tripIndex = 0;
+
+    for (let i = 0; i < this.pointsLayers.length; i++) {
+      if (tripName === this.pointsLayers[i].name) {
+        tripIndex = i;
+        break;
+      }
+    }
+
+    this.map.add(this.roadsLayers[tripIndex].layer);
+    this.map.add(this.pointsLayers[tripIndex].layer);
+    this.map.add(this.sketchGraphicsLayer);
+
+    await this.locate.locate();
+    await this.view.when(() => this.view.zoom = 14);
+
+    await this.view.when(() => {
+      this.addPoint(this.view.center.latitude, this.view.center.longitude, false);
+      this.addPoint(this.startPoints[tripName].lat, this.startPoints[tripName].lon, false);
+      this.getRoute();
+    });
+  }
+
+  getRoute() {
+    const routeUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
+
+    const routeParams = new this._RouteParameters({
+      stops: new this._FeatureSet({
+        features: this.graphicsLayer.graphics.toArray()
+      })
+    });
+
+    this._Route.solve(routeUrl, routeParams)
+      .then((data)=> {
+        if (data.routeResults.length > 0) {
+          this.showRoute(data.routeResults[0].route);
+        } else {
+          console.log('Data route results: ', data.routeResults);
+          console.log('data:', data);
+        }
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+  }
+
+  showRoute(routeResult) {
+    routeResult.symbol = {
+      type: "simple-line",
+      color: [5, 150, 255],
+      width: 3
+    };
+
+    this.view.graphics.add(routeResult, 0);
+  }
+
+  addMeasureElements() {
+    const scalebar = new this._ScaleBar({
+      view: this.view,
+      unit: "metric"
+    });
+
+    this.view.ui.add(scalebar, "bottom-right");
+
+    this.sketchGraphicsLayer = new this._GraphicsLayer();
+    this.map.add(this.sketchGraphicsLayer, this.map.layers.length);
+
+
+    this.sketch = new this._Sketch({
+      layer: this.sketchGraphicsLayer,
+      view: this.view,
+      availableCreateTools: ["polyline", "polygon", "rectangle"],
+      creationMode: "update",
+      updateOnGraphicClick: true,
+      visibleElements: {
+        createTools: {
+          point: false,
+          circle: false
+        },
+        selectionTools:{
+          "lasso-selection": false,
+          "rectangle-selection":false,
+        },
+        settingsMenu: false,
+        undoRedoMenu: false
+      }
+    });
+
+    this.view.ui.add(this.sketch, "top-right");
+
+    this.measurements = document.getElementById("measurements");
+    this.view.ui.add(this.measurements, "manual");
+
+    const polygon = {
+      type: "polygon",
+      spatialReference: {
+        wkid: 3857,
+      },
+      rings: [
+        [
+          [44.983412, 25.639960],
+          [44.983352, 25.649337],
+          [44.979330, 25.649230],
+          [44.979390, 25.639960],
+          [44.983412, 25.639960]
+        ]
+      ],
+    };
+
+    const simplePolygonSymbol = {
+      type: "simple-fill",
+      outline: {
+        color: [200, 0, 0],
+        width: 2,
+      },
+    };
+
+    const polygonGraphic = new this._Graphic({
+      geometry: polygon,
+      symbol: simplePolygonSymbol
+    });
+
+    this.sketchGraphicsLayer.add(polygonGraphic);
+
+    this.view.when(() => {
+      this.sketch.update(polygonGraphic);
+      this.getArea(polygonGraphic.geometry);
+    });
+
+    this.addSketchListener();
+  }
+
+  addSketchListener() {
+    this.sketch.on("update", (e) => {
+      const geometry = e.graphics[0].geometry;
+
+      if (e.state === "start") {
+        this.switchType(geometry);
+      }
+
+      if (e.state === "complete") {
+        this.sketchGraphicsLayer.remove(this.sketchGraphicsLayer.graphics.getItemAt(0));
+        this.measurements.innerHTML = null;
+      }
+
+      if (
+        e.toolEventInfo &&
+        (e.toolEventInfo.type === "scale-stop" ||
+          e.toolEventInfo.type === "reshape-stop" ||
+          e.toolEventInfo.type === "move-stop")
+      ) {
+        this.switchType(geometry);
+      }
+    });
+  }
+
+  getArea(polygon) {
+    const planarArea = this._geometryEngine.planarArea(polygon, "square-kilometers");
+
+    this.measurements.innerHTML =
+      "<b>Planar area</b>: " + planarArea.toFixed(2) + "  km\xB2";
+  }
+
+  getLength(line) {
+    const planarLength = this._geometryEngine.planarLength(line, "kilometers");
+
+    this.measurements.innerHTML =
+      "<b>Planar length</b>: " + planarLength.toFixed(2) + "  km";
+  }
+
+  switchType(geom) {
+    switch (geom.type) {
+      case "polygon":
+        this.getArea(geom);
+        break;
+      case "polyline":
+        this.getLength(geom);
+        break;
+      default:
+        console.log("No value found");
+    }
+  }
 
   ngOnInit() {
     // Initialize MapView and return an instance of MapView

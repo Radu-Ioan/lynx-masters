@@ -1,3 +1,62 @@
+/* import the required JSAPI css */
+// @import url('https://js.arcgis.com/4.12/esri/css/main.css');
+
+/***
+    css for multi select drop down
+**/
+
+html,
+body,
+
+#measurements {
+  position: absolute;
+  bottom: 16px;
+  left: 8px;
+}
+
+.measure-container {
+  position: relative;
+}
+
+.drop-container {
+  display: flex;
+}
+
+.drop-toggle {
+  background-color: #fff;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: hand;
+  border: 1px solid #ccc;
+  width: 200px;
+  text-align: left;
+}
+.drop-toggle i {
+  float:right;
+}
+.drop-show {
+  padding: 4px;
+  width: 200px;
+  background-color: #FFF;
+  border: 1px solid #BABABA;
+  position: absolute;
+  z-index: 100;
+  -webkit-box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  -moz-box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  box-shadow: 0 6px 10px rgba(0,0,0,.15);
+  margin-left: 1px;
+}
+.drop-show label {
+  display: block;
+  font-size: 15px;
+  cursor: pointer;
+}
+.drop-show label input {
+  vertical-align: top;
+}
+.drop-show label span {
+  display: inline-block;
+}
 
 .esri-view {
   height: 500px;
@@ -10,10 +69,7 @@
   padding-bottom: 10px;
 }
 
-.full-w {
-  width: 100%;
-}
-
 .screen-height {
   height: 100vh;
 }
+
