@@ -31,10 +31,11 @@ import { VerifyEmailComponent } from './component/verify-email/verify-email.comp
 import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import { IndexComponent } from './component/index/index.component';
 
 
 @NgModule({
-  declarations: [AppComponent, EsriMapComponent, LoginComponent, RegisterComponent, HomeComponent, VerifyEmailComponent, ForgotPasswordComponent],
+  declarations: [AppComponent, EsriMapComponent, LoginComponent, RegisterComponent, HomeComponent, VerifyEmailComponent, ForgotPasswordComponent, IndexComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -84,7 +84,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   measurements: HTMLElement;
 
   constructor(
-    private router: Router, private authService: AuthService
+    private router: Router, public authService: AuthService
   ) { }
 
 

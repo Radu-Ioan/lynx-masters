@@ -7,11 +7,12 @@ import { RegisterComponent } from './component/register/register.component';
 import { VerifyEmailComponent } from './component/verify-email/verify-email.component';
 import { ForgotPasswordComponent } from './component/forgot-password/forgot-password.component';
 import { AuthGuardService } from './services/guard/auth-guard.service'
+import { IndexComponent } from './component/index/index.component';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    component: IndexComponent,
     pathMatch: 'full',
   },
   {
@@ -30,7 +31,7 @@ export const routes: Routes = [
   {
     path: 'map',
     component: EsriMapComponent,
-    canActivate: [AuthGuardService]
+    // canActivate: [AuthGuardService]
   },
   {
     path: 'verify-email',
