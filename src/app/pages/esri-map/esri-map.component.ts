@@ -596,6 +596,10 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   }
 
   navigateHome() {
-    this.router.navigate(['/home']);
+    if (this.authService.isLoggedIn) {
+      this.router.navigate(['/home']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }
