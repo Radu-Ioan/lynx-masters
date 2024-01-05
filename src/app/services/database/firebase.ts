@@ -10,42 +10,22 @@ export interface ITestItem {
 
 @Injectable()
 export class FirebaseService {
-
-    listFeed: Observable<any[]>;
-    objFeed: Observable<any>;
+    public bobcat: Observable<any>
 
     constructor(public db: AngularFireDatabase) {
 
     }
 
     connectToDatabase() {
-        this.listFeed = this.db.list('list').valueChanges();
-        this.objFeed = this.db.object('obj').valueChanges();
+        this.bobcat = this.db.object('bobcat').valueChanges()
     }
 
-    getChangeFeedList() {
-        return this.listFeed;
-    }
-
-    getChangeFeedObj() {
-        return this.objFeed;
-    }
-
-    addPointItem(lat: number, lng: number) {
-        let item: ITestItem = {
-            name: "test",
-            lat: lat,
-            lng: lng
-        };
-        this.db.list('list').push(item);
-    }
-
-    syncPointItem(lat: number, lng: number) {
-        let item: ITestItem = {
-            name: "test",
-            lat: lat,
-            lng: lng
-        };
-        this.db.object('obj').set([item]);
+    syncBobcat(lat: number, lng: number) {
+      const item: ITestItem = {
+        name: 'bobcat-position',
+        lat: lat,
+        lng: lng
+      }
+      this.db.object('bobcat').set(item)
     }
 }

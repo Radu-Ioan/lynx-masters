@@ -10,7 +10,7 @@ export const environment = {
     apiKey: 'AIzaSyB9sLZ1VLe62JzzsWAYeebcvmjSlR3OhMk',
     authDomain: 'esri-project-fcadf.firebaseapp.com',
     messagingSenderId: '621661673433',
-    databaseUrl: 'https://console.firebase.google.com/project/esri-project-fcadf/database/esri-project-fcadf-default-rtdb/data/~2F'
+    databaseURL: "https://esri-project-fcadf-default-rtdb.europe-west1.firebasedatabase.app",
   },
   production: false
 };

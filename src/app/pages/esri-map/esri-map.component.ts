@@ -22,6 +22,7 @@ import { setDefaultOptions, loadModules } from 'esri-loader';
 import { Router } from '@angular/router';
 import esri = __esri; // Esri TypeScript Types
 import { AuthService } from "src/app/shared/auth.service";
+import { FirebaseService } from "../../services/database/firebase";
 
 
 @Component({
@@ -56,6 +57,20 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   sketch: esri.Sketch;
   sketchGraphicsLayer: esri.GraphicsLayer;
 
+  bobcatGraphic: esri.GraphicsLayer;
+  // asta e ca sa pot sa il scot din layerul de mai sus,
+  // i.e sa pot executa bobcatGraphic.remove(bobcatPointGraphic)
+  // in exemplul din lab 5 erau mai multe obiecte adaugate in layer,
+  // si nu se dadea removeAll(), de asta era necesar sa pastrez
+  // punctul pus, ca sa pot sa il scot
+  bobcatPointGraphic: esri.Graphic;
+  // date despre punct, sa il pot modifica
+  bobcatCenter: Array<number> = [25.686207, 44.999616];
+  alpha = 0.;
+  radius = 0.005;
+  timeoutHandler = null
+  isConnected = false
+
   // Attributes
   zoom = 13;
   center: Array<number> = [45.015705, 25.656930].reverse();
@@ -84,7 +99,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   measurements: HTMLElement;
 
   constructor(
-    private router: Router, public authService: AuthService
+    private router: Router, public authService: AuthService, private fbs: FirebaseService
   ) { }
 
 
@@ -318,6 +333,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       this.addMeasureElements();
 
+      this.addPoint(this.bobcatCenter[0], this.bobcatCenter[1], false);
 
       // Fires `pointer-move` event when user clicks on "Shift"
       // key and moves the pointer on the view.
@@ -340,9 +356,12 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     // puncte in el cu this.graphicsLayer.add(pointGrahpic)
     this.graphicsLayer = new this._GraphicsLayer();
     this.map.add(this.graphicsLayer);
+
+    this.bobcatGraphic = new this._GraphicsLayer()
+    this.map.add(this.bobcatGraphic)
   }
 
-  addPoint(lat: number, lng: number, register: boolean) {
+  addPoint(lng: number, lat: number, register: boolean) {
     const point = { //Create a point
       type: "point",
       longitude: lng,
@@ -361,9 +380,10 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       symbol: simpleMarkerSymbol
     });
 
-    this.graphicsLayer.add(pointGraphic);
+    this.bobcatGraphic.add(pointGraphic);
+
     if (register) {
-      this.pointGraphic = pointGraphic;
+      this.bobcatPointGraphic = pointGraphic;
     }
   }
 
@@ -581,6 +601,8 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       // The map has been initialized
       console.log("mapView ready: ", this.view.ready);
       this.loaded = this.view.ready;
+      this.connectFirebase()
+      this.runTimer()
     });
   }
 
@@ -589,6 +611,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       // destroy the map view
       this.view.container = null;
     }
+    this.stopTimer()
   }
 
   signout() {
@@ -601,5 +624,42 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     } else {
       this.router.navigate(['/']);
     }
+  }
+
+  moveBobcat() {
+    this.removePoint()
+    this.alpha += 0.1
+    const x = this.bobcatCenter[0] + this.radius * Math.cos(this.alpha)
+    const y = this.bobcatCenter[1] + this.radius * Math.sin(this.alpha)
+    this.fbs.syncBobcat(x, y)
+    this.addPoint(x, y, true)
+  }
+
+  removePoint() {
+    if (this.bobcatPointGraphic != null) {
+      this.bobcatGraphic.remove(this.bobcatPointGraphic)
+    }
+  }
+
+  runTimer() {
+    this.timeoutHandler = setTimeout(() => {
+      this.moveBobcat()
+      this.runTimer()
+    }, 200)
+  }
+
+  stopTimer() {
+    if (this.timeoutHandler != null) {
+      clearTimeout(this.timeoutHandler)
+      this.timeoutHandler = null
+    }
+  }
+
+  connectFirebase() {
+    if (this.isConnected) {
+      return
+    }
+    this.isConnected = true
+    this.fbs.connectToDatabase()
   }
 }
