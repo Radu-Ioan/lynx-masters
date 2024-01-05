@@ -69,7 +69,6 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   alpha = 0.;
   radius = 0.005;
   timeoutHandler = null
-  isConnected = false
 
   // Attributes
   zoom = 13;
@@ -601,7 +600,6 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       // The map has been initialized
       console.log("mapView ready: ", this.view.ready);
       this.loaded = this.view.ready;
-      this.connectFirebase()
       this.runTimer()
     });
   }
@@ -653,13 +651,5 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       clearTimeout(this.timeoutHandler)
       this.timeoutHandler = null
     }
-  }
-
-  connectFirebase() {
-    if (this.isConnected) {
-      return
-    }
-    this.isConnected = true
-    this.fbs.connectToDatabase()
   }
 }

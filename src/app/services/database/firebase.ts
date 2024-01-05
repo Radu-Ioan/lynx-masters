@@ -11,13 +11,11 @@ export interface ITestItem {
 @Injectable()
 export class FirebaseService {
     public bobcat: Observable<any>
+    public featureLayers: Observable<any>
 
     constructor(public db: AngularFireDatabase) {
-
-    }
-
-    connectToDatabase() {
-        this.bobcat = this.db.object('bobcat').valueChanges()
+      this.bobcat = db.object('bobcat').valueChanges()
+      this.featureLayers = db.object('feature-layers').valueChanges()
     }
 
     syncBobcat(lat: number, lng: number) {
