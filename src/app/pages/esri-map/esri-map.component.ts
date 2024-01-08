@@ -52,23 +52,34 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   // Instances
   map: esri.Map;
   view: esri.MapView;
-  pointGraphic: esri.Graphic;
-  graphicsLayer: esri.GraphicsLayer;
   sketch: esri.Sketch;
   sketchGraphicsLayer: esri.GraphicsLayer;
 
-  bobcatGraphic: esri.GraphicsLayer;
-  // asta e ca sa pot sa il scot din layerul de mai sus,
-  // i.e sa pot executa bobcatGraphic.remove(bobcatPointGraphic)
-  // in exemplul din lab 5 erau mai multe obiecte adaugate in layer,
-  // si nu se dadea removeAll(), de asta era necesar sa pastrez
-  // punctul pus, ca sa pot sa il scot
-  bobcatPointGraphic: esri.Graphic;
-  // date despre punct, sa il pot modifica
-  bobcatCenter: Array<number> = [25.686207, 44.999616];
-  alpha = 0.;
-  radius = 0.005;
+  routeStopsGraphic: esri.GraphicsLayer;
+  bobcatsGraphic: esri.GraphicsLayer;
   timeoutHandler = null
+
+  bobcatsCenters = [
+    {
+      lat: 45.03520058721398,
+      lon: 25.676690495690597
+    },
+    {
+      lat: 45.005462,
+      lon: 25.704955
+    }, // ditesti
+    {
+      lat: 45.020500,
+      lon: 25.583597
+    }, // stanciu
+    {
+      lat: 44.993524,
+      lon: 25.603386
+    },// cristian
+  ]
+
+  bobcatsAngles = [0., 0.2, 0.47, 1.202]
+  bobcatsRadiuses = [0.005, 0.0015, 0.007, 0.0023]
 
   // Attributes
   zoom = 13;
@@ -332,8 +343,6 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
       this.addMeasureElements();
 
-      this.addPoint(this.bobcatCenter[0], this.bobcatCenter[1], false);
-
       // Fires `pointer-move` event when user clicks on "Shift"
       // key and moves the pointer on the view.
       this.view.on('pointer-move', ["Shift"], (event) => {
@@ -351,16 +360,36 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   }
 
   addGraphicLayers() {
-    // obiectul asta e initializat acum si dupa pe parcurs se pot adauga
-    // puncte in el cu this.graphicsLayer.add(pointGrahpic)
-    this.graphicsLayer = new this._GraphicsLayer();
-    this.map.add(this.graphicsLayer);
+    this.routeStopsGraphic = new this._GraphicsLayer();
+    this.map.add(this.routeStopsGraphic);
 
-    this.bobcatGraphic = new this._GraphicsLayer()
-    this.map.add(this.bobcatGraphic)
+    this.bobcatsGraphic = new this._GraphicsLayer()
+    this.map.add(this.bobcatsGraphic)
   }
 
-  addPoint(lng: number, lat: number, register: boolean) {
+  addRouteStop(lat: number, lng: number) {
+    const point = {
+      type: "point",
+      longitude: lng,
+      latitude: lat
+    };
+    const simpleMarkerSymbol = {
+      type: "simple-marker",
+      color: [119, 226, 80],
+      outline: {
+        color: [255, 255, 255],
+        width: 1
+      }
+    };
+    let pointGraphic: esri.Graphic = new this._Graphic({
+      geometry: point,
+      symbol: simpleMarkerSymbol
+    });
+
+    this.routeStopsGraphic.add(pointGraphic)
+  }
+
+  addBobcatPoint(lat: number, lng: number) {
     const point = { //Create a point
       type: "point",
       longitude: lng,
@@ -379,16 +408,26 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       symbol: simpleMarkerSymbol
     });
 
-    this.bobcatGraphic.add(pointGraphic);
+    this.bobcatsGraphic.add(pointGraphic);
+  }
 
-    if (register) {
-      this.bobcatPointGraphic = pointGraphic;
-    }
+  hideAllTrails() {
+    this.map.layers.removeMany(this.pointsLayers.reduce((acc, point) => {
+      acc.push(point.layer)
+      return acc
+    }, []))
+    this.map.layers.removeMany(this.roadsLayers.reduce((acc, road) => {
+      acc.push(road.layer)
+      return acc
+    }, []))
   }
 
   showTrail(name: string) {
-    this.map.layers.removeAll();
-    this.graphicsLayer.graphics.removeAll();
+    this.hideAllTrails()
+    this.routeStopsGraphic.removeAll();
+
+    // remove the possibly previous existing route displayed with
+    // showRoute()
     this.view.graphics.removeAll();
 
     this.showRoad(name);
@@ -399,15 +438,16 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       if (id === this.pointsLayers[i].name) {
         this.map.add(this.roadsLayers[i].layer);
         this.map.add(this.pointsLayers[i].layer);
-        this.map.add(this.sketchGraphicsLayer);
         break;
       }
     }
   }
 
   async startTrip(tripName: string) {
-    this.map.layers.removeAll();
-    this.graphicsLayer.graphics.removeAll();
+    this.hideAllTrails()
+    this.routeStopsGraphic.removeAll();
+
+    // remove an eventually previous displayed route
     this.view.graphics.removeAll();
 
     let tripIndex = 0;
@@ -421,14 +461,13 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
     this.map.add(this.roadsLayers[tripIndex].layer);
     this.map.add(this.pointsLayers[tripIndex].layer);
-    this.map.add(this.sketchGraphicsLayer);
 
     await this.locate.locate();
     await this.view.when(() => this.view.zoom = 14);
 
     await this.view.when(() => {
-      this.addPoint(this.view.center.latitude, this.view.center.longitude, false);
-      this.addPoint(this.startPoints[tripName].lat, this.startPoints[tripName].lon, false);
+      this.addRouteStop(this.view.center.latitude, this.view.center.longitude);
+      this.addRouteStop(this.startPoints[tripName].lat, this.startPoints[tripName].lon);
       this.getRoute();
     });
   }
@@ -438,7 +477,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
 
     const routeParams = new this._RouteParameters({
       stops: new this._FeatureSet({
-        features: this.graphicsLayer.graphics.toArray()
+        features: this.routeStopsGraphic.graphics.toArray()
       })
     });
 
@@ -475,7 +514,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     this.view.ui.add(scalebar, "bottom-right");
 
     this.sketchGraphicsLayer = new this._GraphicsLayer();
-    this.map.add(this.sketchGraphicsLayer, this.map.layers.length);
+    this.map.add(this.sketchGraphicsLayer);
 
 
     this.sketch = new this._Sketch({
@@ -625,18 +664,24 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   }
 
   moveBobcat() {
-    this.removePoint()
-    this.alpha += 0.1
-    const x = this.bobcatCenter[0] + this.radius * Math.cos(this.alpha)
-    const y = this.bobcatCenter[1] + this.radius * Math.sin(this.alpha)
-    this.fbs.syncBobcat(x, y)
-    this.addPoint(x, y, true)
-  }
+    this.bobcatsGraphic.removeAll()
+    const updatedPositions = []
 
-  removePoint() {
-    if (this.bobcatPointGraphic != null) {
-      this.bobcatGraphic.remove(this.bobcatPointGraphic)
+    for (let i = 0; i < this.bobcatsCenters.length; i++) {
+      const center = this.bobcatsCenters[i]
+      const radius = this.bobcatsRadiuses[i]
+
+      this.bobcatsAngles[i] += 0.1
+      const angle = this.bobcatsAngles[i]
+
+      const lat = center.lat + radius * Math.cos(angle)
+      const lon = center.lon + radius * Math.sin(angle)
+      this.addBobcatPoint(lat, lon)
+
+      updatedPositions.push({lat, lon})
     }
+
+    this.fbs.syncBobcatList(updatedPositions)
   }
 
   runTimer() {
