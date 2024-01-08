@@ -42,14 +42,14 @@
                 <mat-option *ngFor="let value of [1, 2, 3, 4, 5]" [value]="value">{{ value }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <button mat-button mat-button color="primary" type="button" class="full-w" (click)="createTrailReview()">Submit review</button>
+            <button mat-button color="primary" type="button" class="full-w" (click)="createTrailReview()">Submit review</button>
           </form>
       </div>
-      
-      <mat-list>
+
+      <mat-list *ngIf="authService.isLoggedIn">
           <button mat-button color="primary" type="button" class="full-w" (click)="showReviews()">Show Reviews</button>
       </mat-list>
-      
+
   </div>
   <div fxFlex="80%" class="measure-container">
       <div #mapViewNode class="screen-height"></div>
