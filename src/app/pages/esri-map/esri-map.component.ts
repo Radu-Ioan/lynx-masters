@@ -394,23 +394,29 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     this.routeStopsGraphic.add(pointGraphic)
   }
 
+  private getBobcatSymbolUrl() {
+    return "data:image/png;base64,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"
+  }
+
   addBobcatPoint(lat: number, lng: number) {
+    const imageUrl = this.getBobcatSymbolUrl()
+
     const point = { //Create a point
       type: "point",
       longitude: lng,
       latitude: lat
     };
-    const simpleMarkerSymbol = {
-      type: "simple-marker",
-      color: [226, 119, 40],  // Orange
-      outline: {
-        color: [255, 255, 255], // White
-        width: 1
-      }
+    const pictureMarkerSymbol = {
+        type: "picture-marker",
+        url: imageUrl,
+        width: "24px",
+        height: "24px",
+        xoffset: 0,
+        yoffset: 0,
     };
     let pointGraphic: esri.Graphic = new this._Graphic({
       geometry: point,
-      symbol: simpleMarkerSymbol
+      symbol: pictureMarkerSymbol
     });
 
     this.bobcatsGraphic.add(pointGraphic);
@@ -490,7 +496,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   showRoad(id: string) {
     for (let i = 0; i < this.pointsLayers.length; i++) {
       if (id === this.pointsLayers[i].name) {
-        this.map.add(this.roadsLayers[i].layer);
+        this.map.add(this.roadsLayers[i].layer, 0);
         this.map.add(this.pointsLayers[i].layer);
         break;
       }
@@ -516,7 +522,7 @@ export class EsriMapComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.map.add(this.roadsLayers[tripIndex].layer);
+    this.map.add(this.roadsLayers[tripIndex].layer, 0);
     this.map.add(this.pointsLayers[tripIndex].layer);
 
     await this.locate.locate();
