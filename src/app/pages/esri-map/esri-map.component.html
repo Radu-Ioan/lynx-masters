@@ -27,9 +27,34 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      <div *ngIf="authService.isLoggedIn">
+        <p></p>
+        <h4>Write a review</h4>
+      </div>
+      <div>
+        <form #myForm="ngForm" fxLayout="column" *ngIf="authService.isLoggedIn">
+            <mat-form-field>
+              <input matInput placeholder="Enter review description" name="textValue" [(ngModel)]="newText" required>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Choose rating (1 to 5)</mat-label>
+              <mat-select name="intValue" [(ngModel)]="intValue" required>
+                <mat-option *ngFor="let value of [1, 2, 3, 4, 5]" [value]="value">{{ value }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-button mat-button color="primary" type="button" class="full-w" (click)="createTrailReview()">Submit review</button>
+          </form>
+      </div>
+      
+      <mat-list>
+          <button mat-button color="primary" type="button" class="full-w" (click)="showReviews()">Show Reviews</button>
+      </mat-list>
+      
   </div>
   <div fxFlex="80%" class="measure-container">
       <div #mapViewNode class="screen-height"></div>
       <div id="measurements"></div>
   </div>
 </div>
+
+

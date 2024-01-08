@@ -1,0 +1,12 @@
+<h2>Reviews for Trail: {{ data.name }} </h2>
+<ol>
+<div *ngFor="let review of data.reviews">
+  <li *ngIf="review">
+    <p>Descriere: {{ review.name }}</p>
+    <p>Rating: {{ review.ratting }}</p>
+    <ng-container *ngFor="let _ of [].constructor(review.ratting); let i = index">
+        <img src="assets/images/star.png" alt="Star Img" class="letter-size-image"/>
+    </ng-container>
+  </li>
+</div>
+</ol>

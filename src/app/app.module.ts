@@ -18,6 +18,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 
+// for reviews part
+import { MatInputModule } from '@angular/material/input';
+import { MatDialogModule } from '@angular/material/dialog';
+import { ReviewDialogComponent } from "./component/reviews/review-dialog.component";
+import { CommonModule } from "@angular/common";
+
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { initializeApp,provideFirebaseApp } from '@angular/fire/app';
 import { provideAuth,getAuth } from '@angular/fire/auth';
@@ -35,7 +41,7 @@ import { IndexComponent } from './component/index/index.component';
 
 
 @NgModule({
-  declarations: [AppComponent, EsriMapComponent, LoginComponent, RegisterComponent, HomeComponent, VerifyEmailComponent, ForgotPasswordComponent, IndexComponent],
+  declarations: [AppComponent, EsriMapComponent, LoginComponent, RegisterComponent, HomeComponent, VerifyEmailComponent, ForgotPasswordComponent, IndexComponent, ReviewDialogComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -53,7 +59,10 @@ import { IndexComponent } from './component/index/index.component';
     AngularFireDatabaseModule,
     FormsModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatInputModule,
+    MatDialogModule,
+    CommonModule
   ],
   providers: [
     FirebaseService,

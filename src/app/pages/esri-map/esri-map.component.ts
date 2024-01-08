@@ -22,8 +22,11 @@ import { setDefaultOptions, loadModules } from 'esri-loader';
 import { Router } from '@angular/router';
 import esri = __esri; // Esri TypeScript Types
 import { AuthService } from "src/app/shared/auth.service";
-import { FirebaseService } from "../../services/database/firebase";
+import { FirebaseService, Review } from "../../services/database/firebase";
 
+import { MatDialog } from '@angular/material/dialog';
+import { ReviewDialogComponent } from "src/app/component/reviews/review-dialog.component";
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: "app-esri-map",
@@ -33,6 +36,7 @@ import { FirebaseService } from "../../services/database/firebase";
 export class EsriMapComponent implements OnInit, OnDestroy {
   // The <div> where we will place the map
   @ViewChild("mapViewNode", {static: true}) private mapViewEl: ElementRef;
+  @ViewChild('myForm', { static: false }) myForm: NgForm;
 
   // register Dojo AMD dependencies
   _Map;
@@ -109,7 +113,8 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   measurements: HTMLElement;
 
   constructor(
-    private router: Router, public authService: AuthService, private fbs: FirebaseService
+    private router: Router, public authService: AuthService, private fbs: FirebaseService,
+    private dialog: MatDialog 
   ) { }
 
 
@@ -411,6 +416,52 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     this.bobcatsGraphic.add(pointGraphic);
   }
 
+  // text for review description
+  newText: string = "";
+  // value for raing must be 1-5
+  intValue: number = 0;
+  // trail name for adding review
+  trail_name: string = "";
+
+  flag_for_submit_button: number = 0;
+  createTrailReview() {
+    this.flag_for_submit_button = 1
+    if (this.newText.trim() !== "" && this.trail_name !== "" && this.intValue !== 0) {
+      const item: Review = {
+        name: this.newText,
+        ratting: this.intValue
+      };
+      
+      // Create or update trail with new item(review)
+      this.fbs.createTrailReview(item, this.trail_name);
+      this.myForm.resetForm();
+      this.intValue = 0
+    }
+  }
+
+  
+  showReviews() {
+    // Retrieve the reviews for 'Ceva' from the 'Reviews' collection
+    
+    if (this.trail_name == "") {
+      return;
+    }
+    this.fbs.getReviewsForTrail(this.trail_name).subscribe((reviewsData: any) => {
+      console.log('Retrieved Reviews for Trail:', reviewsData);
+      const reviews = reviewsData || [];
+
+      // Open the review dialog with the retrieved reviews
+      this.dialog.open(ReviewDialogComponent, {
+        data: {
+          reviews: reviews,
+          name: this.trail_name
+        },
+        width: '300px', // Set the width as needed
+        height: '300px', // Set the height as needed
+      });
+    });
+  }
+
   hideAllTrails() {
     this.map.layers.removeMany(this.pointsLayers.reduce((acc, point) => {
       acc.push(point.layer)
@@ -425,6 +476,9 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   showTrail(name: string) {
     this.hideAllTrails()
     this.routeStopsGraphic.removeAll();
+
+    // name for review db
+    this.trail_name = name;
 
     // remove the possibly previous existing route displayed with
     // showRoute()
@@ -446,6 +500,9 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   async startTrip(tripName: string) {
     this.hideAllTrails()
     this.routeStopsGraphic.removeAll();
+
+    // set name for review db
+    this.trail_name = tripName;
 
     // remove an eventually previous displayed route
     this.view.graphics.removeAll();
