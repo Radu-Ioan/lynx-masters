@@ -11,6 +11,5 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./review-dialog.component.scss']
 })
 export class ReviewDialogComponent {
-  createRangeArray = (length: number) => Array.from({ length }, (_, index) => index);
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 }

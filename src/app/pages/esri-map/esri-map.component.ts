@@ -428,10 +428,9 @@ export class EsriMapComponent implements OnInit, OnDestroy {
   intValue: number = 0;
   // trail name for adding review
   trail_name: string = "";
-
-  flag_for_submit_button: number = 0;
+  // flag_for_submit_button: number = 0;
   createTrailReview() {
-    this.flag_for_submit_button = 1
+    // this.flag_for_submit_button = 1
     if (this.newText.trim() !== "" && this.trail_name !== "" && this.intValue !== 0) {
       const item: Review = {
         name: this.newText,
@@ -455,15 +454,27 @@ export class EsriMapComponent implements OnInit, OnDestroy {
     this.fbs.getReviewsForTrail(this.trail_name).subscribe((reviewsData: any) => {
       console.log('Retrieved Reviews for Trail:', reviewsData);
       const reviews = reviewsData || [];
+      let total = 0;
+      let nr = 0
+      for (let index = 0; index < reviews.length; index++) {
+        if (typeof reviews[index].ratting === 'number' && Number.isInteger(reviews[index].ratting)) {
+          total += reviews[index].ratting;
+          nr++;
+        
+        }
+      }
+      let avg_rating = total/nr;
+    
 
-      // Open the review dialog with the retrieved reviews
+      // Open  review dialog 
       this.dialog.open(ReviewDialogComponent, {
         data: {
           reviews: reviews,
-          name: this.trail_name
+          name: this.trail_name,
+          avg: avg_rating
         },
-        width: '300px', // Set the width as needed
-        height: '300px', // Set the height as needed
+        width: '300px', 
+        height: '300px', 
       });
     });
   }

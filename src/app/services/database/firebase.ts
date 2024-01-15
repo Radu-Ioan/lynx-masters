@@ -23,16 +23,16 @@ export class FirebaseService {
     createTrailReview(item: Review, trail_name: string) {
       // Retrieve the current data from 'Reviews'
       this.db.object('Reviews').valueChanges().pipe(take(1)).subscribe((reviewsData: any) => {
-        // If 'Reviews' doesn't exist or is empty, initialize it as an empty object
+        // If 'Reviews' doesnt exist or is empty, initialize it as an empty object
         const newReviewsData = reviewsData ? { ...reviewsData } : {};
   
-        // Create 'Ceva' array if it doesn't exist
+        // Create trail array if it doesn't exist
         newReviewsData[trail_name] = newReviewsData[trail_name] ? newReviewsData[trail_name] : [];
   
-        // Add the new item to the 'Ceva' array
+        // Add the new item to the trail array
         newReviewsData[trail_name].push(item);
   
-        // Update the 'Reviews' collection with the modified data
+        // Update the 'Reviews' collection with the trail data
         this.db.object('Reviews').set(newReviewsData);
       });
     }
