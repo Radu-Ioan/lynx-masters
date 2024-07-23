@@ -1,5 +1,5 @@
 
-Cum se foloseste:
+## How to run the app:
 
 ```
 $ git clone <repository url>
